@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # Function to generate random coefficient for each harmonic
 def coeff(num, l, m):
-    val = num * (1 / (l + 1)**1.5) * np.random.normal(loc=0.0, scale=0.5)
+    val = num * (1 / (l + 1)**2) * np.random.normal(loc=0.0, scale=1.5)
     return val
 
 # --- Planet geometry ---
@@ -13,9 +13,10 @@ radius = 5000e3       # radius of planet [m]
 baseThickness = 10e3  # Base thickness number (core radius)
 
 # --- Simulation Parameters ---
-N = 35                            # max spherical harmonic degree
-theta = np.linspace(0, np.pi, 100)
-phi = np.linspace(0, 2 * np.pi, 100)
+N = 40                            # max spherical harmonic degree
+gridSize = 100
+theta = np.linspace(0, np.pi, gridSize)
+phi = np.linspace(0, 2 * np.pi, 2*gridSize)
 theta, phi = np.meshgrid(theta, phi)
 
 Y_sum = np.zeros(theta.shape)
@@ -66,18 +67,18 @@ ax.plot_surface(
 )
 
 # --- Transparent blue sphere (core) centered at origin ---
-theta_core = np.linspace(0, np.pi, 50)
-phi_core = np.linspace(0, 2 * np.pi, 50)
-phi_core, theta_core = np.meshgrid(phi_core, theta_core)
+# theta_core = np.linspace(0, np.pi, 50)
+# phi_core = np.linspace(0, 2 * np.pi, 50)
+# phi_core, theta_core = np.meshgrid(phi_core, theta_core)
 
-x_core = radius * np.sin(theta_core) * np.cos(phi_core)
-y_core = radius * np.sin(theta_core) * np.sin(phi_core)
-z_core = radius * np.cos(theta_core)
+# x_core = radius * np.sin(theta_core) * np.cos(phi_core)
+# y_core = radius * np.sin(theta_core) * np.sin(phi_core)
+# z_core = radius * np.cos(theta_core)
 
-ax.plot_surface(
-    x_core, y_core, z_core,
-    color='blue', alpha=0.7, edgecolor='none'
-)
+# ax.plot_surface(
+#     x_core, y_core, z_core,
+#     color='blue', alpha=0.7, edgecolor='none'
+# )
 
 # --- Final plot settings ---
 ax.set_title("Deformed Sphere with Transparent Core")
