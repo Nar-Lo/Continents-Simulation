@@ -9,14 +9,14 @@ GRID_RES = 180
 NUM_PLATES = 10
 TIME_STEP = 1e3
 ROTATION_SCALE = 1e-6
-NUM_STEPS = 1000
+NUM_STEPS = 10
 MAX_ELEVATION = 8000
 MIN_ELEVATION = -6000
 UPLIFT_FACTOR = 8000  # stronger uplift for collision zones
 RIFT_DROP_FACTOR = 4000  # sharper drop for divergence
-EROSION_RATE = 0.4
-SMOOTHING_SIGMA = 5
-ISOLATED_DROP = 0.4
+EROSION_RATE = 0.7
+SMOOTHING_SIGMA = 9
+ISOLATED_DROP = 0.7
 GHOST_CLEAN_THRESHOLD = -3000
 
 # ================== Utility Functions ==================
