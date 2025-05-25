@@ -1,4 +1,5 @@
 *.mp4
 *.gif
-*.nyx
+*.nix
 *.venv
+data/
