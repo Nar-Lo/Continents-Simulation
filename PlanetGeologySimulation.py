@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.animation import PillowWriter
 from scipy.ndimage import gaussian_filter, binary_dilation, label
 
 # ================== Configuration Parameters ==================
@@ -188,4 +189,8 @@ if __name__ == "__main__":
         ax.set_title(f"Topography at Step {frame + 1}")
         return quad,
     ani = animation.FuncAnimation(fig, update, frames=len(terrain_history), blit=False, repeat=False)
-    ani.save("planetary_topography_evolution.mp4", writer="ffmpeg", fps=30)
+    try:
+        ani.save("planetary_topography_evolution.mp4", writer="ffmpeg", fps=30)
+    except ValueError:
+        print("Could not generate .mp4 file, as ffmpeg was not found. Defaulting to PillowWriter...")
+        ani.save("planetary_topography_evolution.gif", writer=PillowWriter(fps=30))
