@@ -190,7 +190,7 @@ if __name__ == "__main__":
         return quad,
     ani = animation.FuncAnimation(fig, update, frames=len(terrain_history), blit=False, repeat=False)
     try:
-        ani.save("planetary_topography_evolution.mp4", writer="ffmpeg", fps=30)
+        ani.save("ScratchFolderOutput/planetary_topography_evolution.mp4", writer="ffmpeg", fps=30)
     except ValueError:
         print("Could not generate .mp4 file, as ffmpeg was not found. Defaulting to PillowWriter...")
-        ani.save("planetary_topography_evolution.gif", writer=PillowWriter(fps=30))
+        ani.save("ScratchFolderOutput/planetary_topography_evolution.gif", writer=PillowWriter(fps=30))
