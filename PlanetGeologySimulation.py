@@ -7,10 +7,10 @@ from scipy.ndimage import gaussian_filter, binary_dilation, label
 # ================== Configuration Parameters ==================
 RADIUS = 6371
 GRID_RES = 180
-NUM_PLATES = 10
-TIME_STEP = 1e3
-ROTATION_SCALE = 1e-6
-NUM_STEPS = 10
+NUM_PLATES = 20
+TIME_STEP = 1e2
+ROTATION_SCALE = 5e-6
+NUM_STEPS = 2000
 MAX_ELEVATION = 8000
 MIN_ELEVATION = -6000
 UPLIFT_FACTOR = 8000  # stronger uplift for collision zones
