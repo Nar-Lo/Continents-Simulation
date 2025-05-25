@@ -6,7 +6,7 @@ from scipy.ndimage import gaussian_filter, binary_dilation, label
 
 # ================== Configuration Parameters ==================
 RADIUS = 6371
-GRID_RES = 180
+GRID_RES = 240
 NUM_PLATES = 20
 TIME_STEP = 1e2
 ROTATION_SCALE = 5e-6
@@ -15,9 +15,9 @@ MAX_ELEVATION = 8000
 MIN_ELEVATION = -6000
 UPLIFT_FACTOR = 8000  # stronger uplift for collision zones
 RIFT_DROP_FACTOR = 4000  # sharper drop for divergence
-EROSION_RATE = 0.7
-SMOOTHING_SIGMA = 9
-ISOLATED_DROP = 0.7
+EROSION_RATE = 1.0
+SMOOTHING_SIGMA = 25
+ISOLATED_DROP = 1.1
 GHOST_CLEAN_THRESHOLD = -3000
 
 # ================== Utility Functions ==================
@@ -172,6 +172,7 @@ def simulate_geology():
         terrain_history.append(eroded)
         current_lat_grid, current_lon_grid = new_lat, new_lon
         current_plate_map = new_plate_map
+        print(f"Completed step {step} of {NUM_STEPS}")
     return lat_grid, lon_grid, terrain_history
 
 # ================== Run and Save ==================
