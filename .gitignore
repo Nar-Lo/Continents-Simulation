@@ -4,3 +4,5 @@
 *.venv
 data/
 venv/
+__pychache__/
+*.pyc
