@@ -5,7 +5,9 @@ import numpy as np
 from scipy.special import lpmv, factorial, gammaln, sph_harm
 import matplotlib.pyplot as plt
 import multiprocessing
+import time
 
+script_start_time = time.perf_counter()
 
 def factorial_ratio(numerator, denominator):
     return np.exp(gammaln(numerator + 1) - gammaln(denominator + 1))
@@ -74,7 +76,9 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     phi = np.radians(long_grid)
 
     for n in range(max_degree + 1):
-        print(n)
+        print("===========================")
+        print(f"Begun analysis of step {n}")
+        start_time_analysis = time.perf_counter()
         # for m in range(n + 1):
         #     # Harmonics at each longitude
         #     cos_mphi = np.cos(m * phi)
@@ -103,6 +107,9 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
 
             V += coeff * Ynm       
 
+        end_time_analysis = time.perf_counter()
+        elapsed_time_analysis = end_time_analysis - start_time_analysis
+        print(f"Time elapsed: {elapsed_time_analysis:.2} seconds")
     return V
 
 def main():
@@ -140,6 +147,12 @@ def main():
     plt.xlabel('Longitude (degrees)')
     plt.ylabel('Latitude (degrees)')
     plt.title('Spherical Harmonic Synthesis Result')
+
+    script_end_time = time.perf_counter()
+    total_runtime = script_end_time - script_start_time
+    print("=========================================")
+    print(f"Total runtime of script was {total_runtime:.2f} seconds")
+
     plt.show()
 
 if __name__ == "__main__":
