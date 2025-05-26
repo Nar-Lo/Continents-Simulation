@@ -105,39 +105,42 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
 
     return V
 
+def main():
+    filename = "data/Earth2014.TBI2014.degree10800.bshc"
+    C, S, max_degree = read_bshc(filename)
 
-filename = "data/Earth2014.TBI2014.degree10800.bshc"
-C, S, max_degree = read_bshc(filename)
+    # Define grid resolution
+    nlat = 180  # number of latitude points
+    nlon = 360  # number of longitude points
 
-# Define grid resolution
-nlat = 180  # number of latitude points
-nlon = 360  # number of longitude points
+    # Latitude and longitude in degrees
+    lat = np.linspace(90, -90, nlat)   # from north to south
+    lon = np.linspace(0, 360, nlon, endpoint=False)
 
-# Latitude and longitude in degrees
-lat = np.linspace(90, -90, nlat)   # from north to south
-lon = np.linspace(0, 360, nlon, endpoint=False)
+    # Convert to radians for spherical harmonic evaluation
+    theta = np.radians(90 - lat)  # colatitude
+    phi = np.radians(lon)
 
-# Convert to radians for spherical harmonic evaluation
-theta = np.radians(90 - lat)  # colatitude
-phi = np.radians(lon)
+    # Create 2D meshgrid
+    Theta, Phi = np.meshgrid(theta, phi, indexing='ij')  # shape (nlat, nlon)
+    Lat, Long  = np.meshgrid(lat, lon, indexing='ij')
 
-# Create 2D meshgrid
-Theta, Phi = np.meshgrid(theta, phi, indexing='ij')  # shape (nlat, nlon)
-Lat, Long  = np.meshgrid(lat, lon, indexing='ij')
+    result = sum_harmonics(Lat, Long, S, C, 85)
 
-result = sum_harmonics(Lat, Long, S, C, 85)
+    # Shift longitude to [-180, 180)
+    lon_shifted = (lon + 180) % 360 - 180
 
-# Shift longitude to [-180, 180)
-lon_shifted = (lon + 180) % 360 - 180
+    # Roll data to shift longitude so 0° is centered
+    result_shifted = np.roll(result, shift=nlon // 2, axis=1)
 
-# Roll data to shift longitude so 0° is centered
-result_shifted = np.roll(result, shift=nlon // 2, axis=1)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(result_shifted, extent=[lon_shifted.min(), lon_shifted.max(), lat.min(), lat.max()],
+            origin='upper', aspect='auto', cmap='terrain')
+    plt.colorbar(label='Summed Harmonic Value')
+    plt.xlabel('Longitude (degrees)')
+    plt.ylabel('Latitude (degrees)')
+    plt.title('Spherical Harmonic Synthesis Result')
+    plt.show()
 
-plt.figure(figsize=(10, 5))
-plt.imshow(result_shifted, extent=[lon_shifted.min(), lon_shifted.max(), lat.min(), lat.max()],
-           origin='upper', aspect='auto', cmap='terrain')
-plt.colorbar(label='Summed Harmonic Value')
-plt.xlabel('Longitude (degrees)')
-plt.ylabel('Latitude (degrees)')
-plt.title('Spherical Harmonic Synthesis Result')
-plt.show()
+if __name__ == "__main__":
+    main()

@@ -3,3 +3,4 @@
 *.nix
 *.venv
 data/
+venv/
