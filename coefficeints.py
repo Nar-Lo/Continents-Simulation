@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 filename = "data/Earth2014.TBI2014.degree10800.bshc"
 C, S, max_degree = read_bshc(filename)
 
+#np.savetxt("data/TBI_cos.csv", C, delimiter=",", fmt="%.8f")
+#np.savetxt("data/TBI_sin.csv", S, delimiter=",", fmt="%.8f")
+
 # x_C = np.repeat(np.arange(C.shape[0]), C.shape[1])
 # #x_S = np.repeat(np.arange(S.shape[0]), S.shape[1])
 
@@ -20,16 +23,23 @@ C, S, max_degree = read_bshc(filename)
 # plt.show()
 
 # Compute average along the second index (mean of each row)
-row_means = np.mean(C, axis=1)
+C_row_means = np.mean(C, axis=1)
+C_row_stds  = np.std(C, axis=1)
+S_row_means = np.mean(S, axis=1)
+S_row_stds  = np.std(S, axis=1)
 
 # X values = row indices
 x = np.arange(C.shape[0])
 
 # Plot
-plt.plot(x, row_means, marker='o', linestyle='none')
+plt.plot(x, C_row_means, color='red', marker='o', linestyle='none', label='Cosine means')
+plt.plot(x, C_row_stds, color='orange', label='Cosine stds')
+plt.plot(x, S_row_means, color='blue', marker='o', linestyle='none', label='Sine means')
+plt.plot(x, S_row_stds, color='purple', label='Sine stds')
 plt.xlabel('Row index (first index)')
 plt.ylabel('Average of second index')
 plt.title('Mean values by row index')
 plt.yscale('log')
 plt.grid(True)
+plt.legend()
 plt.show()
