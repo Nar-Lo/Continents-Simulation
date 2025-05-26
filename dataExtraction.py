@@ -6,12 +6,14 @@ from scipy.special import lpmv, factorial, gammaln, sph_harm
 import matplotlib.pyplot as plt
 import multiprocessing
 import time
+import matplotlib as mpl
 
 script_start_time = time.perf_counter()
 
 #====================================================
 # Enter coeffients and HACK's here:
-number_steps_analysis = 80
+number_steps_analysis = 60
+resolution_scaling = 1
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
@@ -34,7 +36,7 @@ _terrain_exag_points = [
 terrain_exag = LinearSegmentedColormap.from_list(
     'terrain_exag', _terrain_exag_points, N=256
 )
-plt.register_cmap(cmap=terrain_exag)
+mpl.colormaps.register(cmap=terrain_exag)
 
 def factorial_ratio(numerator, denominator):
     return np.exp(gammaln(numerator + 1) - gammaln(denominator + 1))
@@ -140,12 +142,12 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     return V
 
 def main():
-    filename = "/home/narlo/Desktop/Github Repo/Continents-Simulation/data/Mars_MOLA_shape_1439.bshc"
+    filename = "data/Earth2014.TBI2014.degree10800.bshc"
     C, S, max_degree = read_bshc(filename)
 
     # Define grid resolution
-    nlat = 180  # number of latitude points
-    nlon = 360  # number of longitude points
+    nlat = resolution_scaling*180  # number of latitude points
+    nlon = resolution_scaling*360  # number of longitude points
 
     # Latitude and longitude in degrees
     lat = np.linspace(90, -90, nlat)   # from north to south
