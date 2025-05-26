@@ -2,6 +2,7 @@ from scipy.special import sph_harm
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import geoid_toolkit
 
 # Function to generate random coefficient for each harmonic
 def coeff(num, l, m):
