@@ -6,18 +6,19 @@ from scipy.special import lpmv, factorial, gammaln, sph_harm
 import matplotlib.pyplot as plt
 import multiprocessing
 import time
+import matplotlib
 
 script_start_time = time.perf_counter()
 
 #====================================================
 # Enter coeffients and HACK's here:
-number_steps_analysis = 80
+number_steps_analysis = 30
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
-# define the key color‐stops
+# Define and register the custom colormap
 _terrain_exag_points = [
     (0.00, '#2e003e'),  # Deep, slightly purple ocean
     (0.25, '#0000ff'),  # Regular ocean blue
@@ -29,12 +30,12 @@ _terrain_exag_points = [
     (0.95, '#ffffff'),  # Snow line
     (1.00, '#ffffff'),  # Snow cap
 ]
-
-# build and register the colormap
-terrain_exag = LinearSegmentedColormap.from_list(
-    'terrain_exag', _terrain_exag_points, N=256
+terrain_exag_cmap = LinearSegmentedColormap.from_list(
+    name="terrain_exag", 
+    colors=_terrain_exag_points
 )
-plt.register_cmap(cmap=terrain_exag)
+matplotlib.colormaps.register(name="terrain_exag", cmap=terrain_exag_cmap)
+
 
 def factorial_ratio(numerator, denominator):
     return np.exp(gammaln(numerator + 1) - gammaln(denominator + 1))
