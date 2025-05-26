@@ -9,6 +9,33 @@ import time
 
 script_start_time = time.perf_counter()
 
+#====================================================
+# Enter coeffients and HACK's here:
+number_steps_analysis = 80
+
+# my_colormaps.py
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+
+# define the key color‐stops
+_terrain_exag_points = [
+    (0.00, '#2e003e'),  # Deep, slightly purple ocean
+    (0.25, '#0000ff'),  # Regular ocean blue
+    (0.45, '#40e0d0'),  # Light turquoise
+    (0.50, '#f2e394'),  # Sandy yellow (beaches)
+    (0.60, '#50c878'),  # Emerald green (grasslands)
+    (0.70, '#228b22'),  # Mature forest green
+    (0.85, '#8b4513'),  # Taiga brown
+    (0.95, '#ffffff'),  # Snow line
+    (1.00, '#ffffff'),  # Snow cap
+]
+
+# build and register the colormap
+terrain_exag = LinearSegmentedColormap.from_list(
+    'terrain_exag', _terrain_exag_points, N=256
+)
+plt.register_cmap(cmap=terrain_exag)
+
 def factorial_ratio(numerator, denominator):
     return np.exp(gammaln(numerator + 1) - gammaln(denominator + 1))
 
@@ -113,7 +140,7 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     return V
 
 def main():
-    filename = "data/Earth2014.TBI2014.degree10800.bshc"
+    filename = "/home/narlo/Desktop/Github Repo/Continents-Simulation/data/Mars_MOLA_shape_1439.bshc"
     C, S, max_degree = read_bshc(filename)
 
     # Define grid resolution
@@ -132,7 +159,7 @@ def main():
     Theta, Phi = np.meshgrid(theta, phi, indexing='ij')  # shape (nlat, nlon)
     Lat, Long  = np.meshgrid(lat, lon, indexing='ij')
 
-    result = sum_harmonics(Lat, Long, S, C, 85)
+    result = sum_harmonics(Lat, Long, S, C, number_steps_analysis)
 
     # Shift longitude to [-180, 180)
     lon_shifted = (lon + 180) % 360 - 180
@@ -142,7 +169,7 @@ def main():
 
     plt.figure(figsize=(10, 5))
     plt.imshow(result_shifted, extent=[lon_shifted.min(), lon_shifted.max(), lat.min(), lat.max()],
-            origin='upper', aspect='auto', cmap='terrain')
+            origin='upper', aspect='auto', cmap='terrain_exag')
     plt.colorbar(label='Summed Harmonic Value')
     plt.xlabel('Longitude (degrees)')
     plt.ylabel('Latitude (degrees)')
