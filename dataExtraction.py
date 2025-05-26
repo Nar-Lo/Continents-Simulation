@@ -106,7 +106,7 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     return V
 
 
-filename = "data/Earth2014.BED2014.degree10800.bshc"
+filename = "data/Earth2014.TBI2014.degree10800.bshc"
 C, S, max_degree = read_bshc(filename)
 
 # Define grid resolution
@@ -127,9 +127,15 @@ Lat, Long  = np.meshgrid(lat, lon, indexing='ij')
 
 result = sum_harmonics(Lat, Long, S, C, 85)
 
+# Shift longitude to [-180, 180)
+lon_shifted = (lon + 180) % 360 - 180
+
+# Roll data to shift longitude so 0° is centered
+result_shifted = np.roll(result, shift=nlon // 2, axis=1)
+
 plt.figure(figsize=(10, 5))
-plt.imshow(result, extent=[lon.min(), lon.max(), lat.min(), lat.max()],
-           origin='lower', aspect='auto', cmap='terrain')
+plt.imshow(result_shifted, extent=[lon_shifted.min(), lon_shifted.max(), lat.min(), lat.max()],
+           origin='upper', aspect='auto', cmap='terrain')
 plt.colorbar(label='Summed Harmonic Value')
 plt.xlabel('Longitude (degrees)')
 plt.ylabel('Latitude (degrees)')
