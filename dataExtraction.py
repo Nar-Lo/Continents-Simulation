@@ -15,7 +15,7 @@ script_start_time = time.perf_counter()
 # Enter coeffients and HACK's here:
 number_steps_analysis = 85
 resolution_scaling = 15
-dataType = "SUR"
+dataType = "BED"
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
@@ -30,8 +30,8 @@ _terrain_exag_points = [
     (0.60, '#50c878'),  # Emerald green (grasslands)
     (0.70, '#228b22'),  # Mature forest green
     (0.85, '#8b4513'),  # Taiga brown
-    (0.95, '#ffffff'),  # Snow line
-    (1.00, '#ffffff'),  # Snow cap
+    (0.95, '#eeeeee'),  # Snow line
+    (1.00, '#eeeeee'),  # Snow cap
 ]
 terrain_exag_cmap = LinearSegmentedColormap.from_list(
     name="terrain_exag", 
@@ -186,7 +186,7 @@ def main():
 
 
     # Read a CSV into a 2D NumPy array
-    result = np.loadtxt("out/test.csv", delimiter=",")
+    result = np.loadtxt(outFilename, delimiter=",")
 
     # Shift longitude to [-180, 180)
     lon_shifted = (lon + 180) % 360 - 180
