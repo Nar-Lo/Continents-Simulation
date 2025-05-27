@@ -7,13 +7,15 @@ import matplotlib.pyplot as plt
 import multiprocessing
 import time
 import matplotlib
+import subprocess
 
 script_start_time = time.perf_counter()
 
 #====================================================
 # Enter coeffients and HACK's here:
-number_steps_analysis = 50
-resolution_scaling = 1
+number_steps_analysis = 85
+resolution_scaling = 15
+dataType = "BED"
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
@@ -28,8 +30,8 @@ _terrain_exag_points = [
     (0.60, "#3fb165"),  # Emerald green (grasslands)
     (0.70, "#1c801c"),  # Mature forest green
     (0.85, '#8b4513'),  # Taiga brown
-    (0.95, '#ffffff'),  # Snow line
-    (1.00, '#ffffff'),  # Snow cap
+    (0.95, '#eeeeee'),  # Snow line
+    (1.00, '#eeeeee'),  # Snow cap
 ]
 terrain_exag_cmap = LinearSegmentedColormap.from_list(
     name="terrain_exag", 
@@ -41,7 +43,6 @@ matplotlib.colormaps.register(name="terrain_exag", cmap=terrain_exag_cmap)
 def factorial_ratio(numerator, denominator):
     return np.exp(gammaln(numerator + 1) - gammaln(denominator + 1))
 
-
 def schmidt_semi_normalization(n, m):
     delta = 1 if m == 0 else 0
     log_factor = (
@@ -51,7 +52,6 @@ def schmidt_semi_normalization(n, m):
         - gammaln(n + m + 1)
     ) / 2.0
     return np.exp(log_factor)
-
 
 def read_bshc(filename):
     data = np.fromfile(filename, dtype='<f8')
@@ -142,8 +142,9 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     return V
 
 def main():
-    filename = "data\\Earth2014.BED2014.degree10800.bshc"
-    C, S, max_degree = read_bshc(filename)
+    filename = f"data/Earth2014.{dataType}2014.degree10800.bshc"
+    outFilename = f"out/{dataType}_deg{number_steps_analysis}_scale{resolution_scaling}.csv"
+    # C, S, max_degree = read_bshc(filename)
 
     # Define grid resolution
     nlat = resolution_scaling*180  # number of latitude points
@@ -161,24 +162,53 @@ def main():
     Theta, Phi = np.meshgrid(theta, phi, indexing='ij')  # shape (nlat, nlon)
     Lat, Long  = np.meshgrid(lat, lon, indexing='ij')
 
-    result = sum_harmonics(Lat, Long, S, C, number_steps_analysis)
+    #result = sum_harmonics(Lat, Long, S, C, number_steps_analysis)
+    # Run C++ function
+    compile_cmd = [
+        "g++",
+        "-std=c++17",
+        "-fopenmp",
+        "-O3",
+        "-march=native",
+        "-o",
+        "testcpp",
+        "harmonic_sum.cpp"
+    ]
+    run_cmd = [
+        "./testcpp",
+        filename,
+        str(number_steps_analysis),
+        str(resolution_scaling),
+        outFilename
+    ]
+    subprocess.run(compile_cmd)
+    subprocess.run(run_cmd)
+
+
+    # Read a CSV into a 2D NumPy array
+    result = np.loadtxt(outFilename, delimiter=",")
 
     # Shift longitude to [-180, 180)
     lon_shifted = (lon + 180) % 360 - 180
 
     # Roll data to shift longitude so 0° is centered
-    result_shifted = np.roll(result, shift=nlon // 2, axis=1)
-
+    # result_shifted = np.roll(result, shift=nlon // 2, axis=1)
+    result_shifted = result
+    
     plt.figure(figsize=(10, 5))
     plt.imshow(result_shifted, extent=[lon_shifted.min(), lon_shifted.max(), lat.min(), lat.max()],
-            origin='upper', aspect='auto', cmap='terrain_exag')
+            origin='upper', aspect='auto',cmap='terrain_exag')#, cmap='terrain_exag'
     plt.colorbar(label='Summed Harmonic Value')
     plt.xlabel('Longitude (degrees)')
     plt.ylabel('Latitude (degrees)')
-    plt.title('Spherical Harmonic Synthesis Result')
 
+    # moved up to display
     script_end_time = time.perf_counter()
     total_runtime = script_end_time - script_start_time
+
+    plt.title(f'{filename} (degree: {number_steps_analysis}, scaling: {resolution_scaling}, time: {total_runtime})')
+
+    
     print("=========================================")
     print(f"Total runtime of script was {total_runtime:.2f} seconds")
 

@@ -6,3 +6,7 @@ data/
 venv/
 __pychache__/
 *.pyc
+out/
+*.exe
+.vscode/
+testcpp
