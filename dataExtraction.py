@@ -25,8 +25,8 @@ _terrain_exag_points = [
     (0.25, '#0000ff'),  # Regular ocean blue
     (0.45, '#40e0d0'),  # Light turquoise
     (0.50, '#f2e394'),  # Sandy yellow (beaches)
-    (0.60, '#50c878'),  # Emerald green (grasslands)
-    (0.70, '#228b22'),  # Mature forest green
+    (0.60, "#3fb165"),  # Emerald green (grasslands)
+    (0.70, "#1c801c"),  # Mature forest green
     (0.85, '#8b4513'),  # Taiga brown
     (0.95, '#ffffff'),  # Snow line
     (1.00, '#ffffff'),  # Snow cap
@@ -142,7 +142,7 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     return V
 
 def main():
-    filename = "data/Earth2014.TBI2014.degree10800.bshc"
+    filename = "data\\Earth2014.BED2014.degree10800.bshc"
     C, S, max_degree = read_bshc(filename)
 
     # Define grid resolution
