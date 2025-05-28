@@ -51,14 +51,18 @@ void sum_harmonics(double* sum, const double* cosArray, const double* sinArray, 
             }
         }
 
-        #pragma omp atomic
-        count += 1;
-        temp = count;
+        // Only update count if printing is enabled
+        if (print) {
+            #pragma omp atomic
+            count += 1;
+            temp = count;
+        }
 
-        if (print && temp % printRate == 0) {
+        // Printout Progress
+        if (print && ((temp % printRate == 0) || temp == gridSize)) {
             end = high_resolution_clock::now();
             duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
-            std::cout << "===================================\n";
+            std::cout << "========== " << "Degree: " << maxDegreeOfSum << " ==========\n";
             std::cout << temp << "/" << gridSize << " completed, total time:" << duration_sec.count() << "ms\n";
         }
 

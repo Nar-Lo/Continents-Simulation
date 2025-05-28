@@ -13,10 +13,10 @@ script_start_time = time.perf_counter()
 
 #====================================================
 # Enter coeffients and HACK's here:
-number_steps_analysis = 85
-resolution_scaling = 5
-dataType = "ICE"
-printRate = 5000
+number_steps_analysis = 128
+resolution_scaling = 1
+dataType = "TBI"
+printRate = 1000
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
