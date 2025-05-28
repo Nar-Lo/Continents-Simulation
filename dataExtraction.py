@@ -14,8 +14,9 @@ script_start_time = time.perf_counter()
 #====================================================
 # Enter coeffients and HACK's here:
 number_steps_analysis = 85
-resolution_scaling = 15
-dataType = "BED"
+resolution_scaling = 5
+dataType = "ICE"
+printRate = 5000
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
@@ -105,7 +106,7 @@ def sum_harmonics(lat_grid, long_grid, S_Coeffs, C_Coeffs, max_degree):
     phi = np.radians(long_grid)
 
     for n in range(max_degree + 1):
-        print("===========================")
+        print("===================================")
         print(f"Begun analysis of step {n}")
         start_time_analysis = time.perf_counter()
         # for m in range(n + 1):
@@ -179,7 +180,8 @@ def main():
         filename,
         str(number_steps_analysis),
         str(resolution_scaling),
-        outFilename
+        outFilename,
+        str(printRate)
     ]
     subprocess.run(compile_cmd)
     subprocess.run(run_cmd)

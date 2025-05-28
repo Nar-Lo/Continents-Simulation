@@ -26,48 +26,110 @@ void printCoefficients(const double* arr, int maxDegree, int count) {
     }
 }
 
-void sum_harmonics(double* sum, const double* cosArray, const double* sinArray, int maxDegreeOfSum, const double* latGrid, const double* lonGrid, int gridSize) {
+void sum_harmonics(double* sum, const double* cosArray, const double* sinArray, int maxDegreeOfSum, const double* latGrid, const double* lonGrid, int gridSize, int printRate) {
 
-    // sum over all orders
-    #pragma omp parallel for schedule(dynamic)
-    for(int n = 0; n <= maxDegreeOfSum; n++) {
-        high_resolution_clock::time_point start;
-        high_resolution_clock::time_point end;
-        duration<double, std::milli> duration_sec;
-        start = high_resolution_clock::now();
-        for(int m = 0; m < n + 1; m++) {
-            double* temp = new double[gridSize];
-            double theta;
-            double phi;
-            double exp_mPhi;
-            double coef;
-            int index1;
-            int index2;
+    int count = 0;
+    high_resolution_clock::time_point start;
+    high_resolution_clock::time_point end;
+    duration<double, std::milli> duration_sec;
+    start = high_resolution_clock::now();
+    bool print = (printRate > 0);
+    //sum over all orders
+    #pragma omp parallel for schedule(static)
+    for(int i = 0; i < gridSize; i++) {
+        double theta;
+        double phi;
+        double coef;
+        int temp;
 
-            // Populate Arrays
-            for(int i = 0; i < gridSize; i++){
+        for(int n = 0; n <= maxDegreeOfSum; n++) {
+            for(int m = 0; m < n + 1; m++) {
                 theta = latGrid[i] * M_PI / 180.0;
                 phi = lonGrid[i] * M_PI / 180.0;
                 coef = (cosArray[idx(n,m)]*std::cos(m*phi) + sinArray[idx(n,m)]*std::sin(m*phi));
-                temp[i] = std::sph_legendre(n, m, theta) * coef;
-                #pragma omp atomic
-                sum[i] += temp[i];
+                sum[i] += std::sph_legendre(n, m, theta) * coef;
             }
-
-            // // Copy over values
-            // for(int i = 0; i < gridSize; i++) {
-
-            // }
-
-            delete[] temp;
         }
 
-        // Progress printout
-        end = high_resolution_clock::now();
-        duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
-        std::cout << "===========================\n";
-        std::cout << "Step " << n << "/" << maxDegreeOfSum << ": " << duration_sec.count() << "ms\n";
+        #pragma omp atomic
+        count += 1;
+        temp = count;
+
+        if (print && temp % printRate == 0) {
+            end = high_resolution_clock::now();
+            duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+            std::cout << "===================================\n";
+            std::cout << temp << "/" << gridSize << " completed, total time:" << duration_sec.count() << "ms\n";
+        }
+
     }
+    
+
+    // sum over all orders
+    // #pragma omp parallel for schedule(static)
+    // for(int i = 0; i < gridSize; i++) {
+    //     high_resolution_clock::time_point start;
+    //     high_resolution_clock::time_point end;
+    //     duration<double, std::milli> duration_sec;
+    //     start = high_resolution_clock::now();
+    //     double theta;
+    //     double phi;
+    //     double coef;
+
+    //     for(int n = 0; n <= maxDegreeOfSum; n++) {
+    //         for(int m = 0; m < n + 1; m++) {
+    //             theta = latGrid[i] * M_PI / 180.0;
+    //             phi = lonGrid[i] * M_PI / 180.0;
+    //             coef = (cosArray[idx(n,m)]*std::cos(m*phi) + sinArray[idx(n,m)]*std::sin(m*phi));
+    //             sum[i] += std::sph_legendre(n, m, theta) * coef;
+    //         }
+    //     }
+    //     end = high_resolution_clock::now();
+    //     duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+    //     std::cout << "===========================\n";
+    //     std::cout << "Point " << i << "/" << gridSize << ": " << duration_sec.count() << "ms\n";
+    // }
+
+    // // sum over all orders
+    // #pragma omp parallel for schedule(dynamic)
+    // for(int n = 0; n <= maxDegreeOfSum; n++) {
+    //     high_resolution_clock::time_point start;
+    //     high_resolution_clock::time_point end;
+    //     duration<double, std::milli> duration_sec;
+    //     start = high_resolution_clock::now();
+    //     for(int m = 0; m < n + 1; m++) {
+    //         double* temp = new double[gridSize];
+    //         double theta;
+    //         double phi;
+    //         double exp_mPhi;
+    //         double coef;
+    //         int index1;
+    //         int index2;
+
+    //         // Populate Arrays
+    //         for(int i = 0; i < gridSize; i++){
+    //             theta = latGrid[i] * M_PI / 180.0;
+    //             phi = lonGrid[i] * M_PI / 180.0;
+    //             coef = (cosArray[idx(n,m)]*std::cos(m*phi) + sinArray[idx(n,m)]*std::sin(m*phi));
+    //             temp[i] = std::sph_legendre(n, m, theta) * coef;
+    //             #pragma omp atomic
+    //             sum[i] += temp[i];
+    //         }
+
+    //         // // Copy over values
+    //         // for(int i = 0; i < gridSize; i++) {
+
+    //         // }
+
+    //         delete[] temp;
+    //     }
+
+    //     // Progress printout
+    //     end = high_resolution_clock::now();
+    //     duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+    //     std::cout << "===========================\n";
+    //     std::cout << "Step " << n << "/" << maxDegreeOfSum << ": " << duration_sec.count() << "ms\n";
+    // }
 
     // #pragma omp parallel
     // {
@@ -201,7 +263,7 @@ int main(int argc, char *argv[]) {
     // start = high_resolution_clock::now();
 
     // Check if correct number of arguments are provided
-    if (argc != 5) {
+    if (argc != 6) {
         std::cerr << "Usage: " << argv[0] << " <filename> <max degree of sum> <scale factor>" << std::endl;
         return 1;
     }
@@ -211,6 +273,7 @@ int main(int argc, char *argv[]) {
     int maxDegreeOfSum = std::stoi(argv[2]);
     int scaleFactor = std::stoi(argv[3]);
     std::string outfilename = argv[4];
+    int printRate = std::stoi(argv[5]);
 
     // Check degree of file Data
     int maxDegree = check_degree(filename);
@@ -246,7 +309,7 @@ int main(int argc, char *argv[]) {
 
     // Sum over array
     double* result = new double[gridSize];
-    sum_harmonics(result, C, S, maxDegreeOfSum, latGrid, lonGrid, gridSize);
+    sum_harmonics(result, C, S, maxDegreeOfSum, latGrid, lonGrid, gridSize, printRate);
 
     // print files
     write_to_csv(result, outfilename, latSize, lonSize);
