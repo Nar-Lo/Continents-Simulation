@@ -13,32 +13,15 @@ script_start_time = time.perf_counter()
 
 #====================================================
 # Enter coeffients and HACK's here:
-number_steps_analysis = 128
-resolution_scaling = 1
-dataType = "TBI"
+number_steps_analysis = 550
+resolution_scaling = 10
+
+dataType = "SUR"
 printRate = 1000
 
 # my_colormaps.py
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 
-# Define and register the custom colormap
-_terrain_exag_points = [
-    (0.00, '#2e003e'),  # Deep, slightly purple ocean
-    (0.25, '#0000ff'),  # Regular ocean blue
-    (0.45, '#40e0d0'),  # Light turquoise
-    (0.50, '#f2e394'),  # Sandy yellow (beaches)
-    (0.60, "#3fb165"),  # Emerald green (grasslands)
-    (0.70, "#1c801c"),  # Mature forest green
-    (0.85, '#8b4513'),  # Taiga brown
-    (0.95, '#eeeeee'),  # Snow line
-    (1.00, '#eeeeee'),  # Snow cap
-]
-terrain_exag_cmap = LinearSegmentedColormap.from_list(
-    name="terrain_exag", 
-    colors=_terrain_exag_points
-)
-matplotlib.colormaps.register(name="terrain_exag", cmap=terrain_exag_cmap)
 
 
 def factorial_ratio(numerator, denominator):
