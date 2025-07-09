@@ -19,9 +19,9 @@ MAX_ELEVATION = 8000
 MIN_ELEVATION = -6000
 UPLIFT_FACTOR = 8000  # stronger uplift for collision zones
 RIFT_DROP_FACTOR = 4000  # sharper drop for divergence
-EROSION_RATE = 0.4
-SMOOTHING_SIGMA = 5
-ISOLATED_DROP = 0.4
+EROSION_RATE = 0.7
+SMOOTHING_SIGMA = 9
+ISOLATED_DROP = 0.7
 GHOST_CLEAN_THRESHOLD = -3000
 PLANET_NAME = "EARTH"
 
@@ -259,4 +259,4 @@ if __name__ == "__main__":
         return quad,
     ani = animation.FuncAnimation(fig, update, frames=len(terrain_history), blit=False, repeat=False)
     #Save animation
-    #ani.save(input("Enter File Name: ") + ".mp4", writer="ffmpeg", fps=30)
+    ani.save(input("Enter File Name: ") + ".mp4", writer="ffmpeg", fps=30)
